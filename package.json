@@ -4,12 +4,14 @@
   "description": "***#Hair_Counter**\r ##Project Overview\r Hair Counter is a real world, community-lead web application that will track, rate and review all different hair care products and routines. Whether it's a new shampoo, a DIY hair mask, or a unique hair growth technique, users can have fun rating different hair care methods based on categories like \"Effectiveness,\" \"Ease of Use,\" and \"Cost Efficiency.\" The platform thrives on user experiences, creativity, and the shared joy of hair care culture. By offering personalized lists and rankings, it caters to each user's unique hair care needs and interests, creating a helpful and engaging experience.\r Key features of the project include\r ##User Profiles\r Personalized accounts where users can manage their hair care routines and view unique lists tailored to them.\r Hair Care Rating System\r Users can rate hair care products and routines on multiple factors such as effectiveness, ease of use, and cost efficiency.\r Dynamic Lists",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9"
   }
 }
