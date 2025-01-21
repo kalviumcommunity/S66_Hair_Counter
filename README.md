@@ -94,3 +94,6 @@ AI-powered analysis
 Community features
 Integration with hair care products
 Export functionality
+
+Deployed link:
+https://s66-hair-counter-3.onrender.com
