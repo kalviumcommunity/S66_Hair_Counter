@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "url": "http://localhost:8886/api/entities/create",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "name": "Entity Name",
+    "description": "Entity Description"
+  }
+}
