@@ -1,0 +1,7 @@
+{
+  "method": "GET",
+  "url": "http://localhost:8886/api/entities",
+  "headers": {
+    "Content-Type": "application/json"
+  }
+}
