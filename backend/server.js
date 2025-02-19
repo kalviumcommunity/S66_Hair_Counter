@@ -1,13 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors'); // Import cors
 require('dotenv').config();
 
-const routes = require('./routes');  // Import the routes
+const entityRoutes = require('./entityRoutes'); 
 
 const app = express();
 const PORT = 8886;
 
+app.use(cors()); // Use cors middleware
 app.use(bodyParser.json());
 
 const mongoURL = process.env.MONGO_URI;  
@@ -24,7 +26,7 @@ mongoose.connection.on('error', (err) => {
   console.error('Error connecting to MongoDB:', err);
 });
 
-app.use('/api/entities', routes);  // Use the routes
+app.use('/api/entities', entityRoutes);  // Use the entity routes
 
 app.get('/ping', (req, res) => {
   res.send('pong');
