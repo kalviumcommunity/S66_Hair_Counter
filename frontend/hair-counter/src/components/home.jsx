@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getEntities } from './apiservice'; 
+import { useHistory } from 'react-router-dom'; // Import useHistory
 
 const Home = () => {
   const [entities, setEntities] = useState([]);
+  const history = useHistory(); // Initialize useHistory
 
   useEffect(() => {
     const fetchEntities = async () => {
@@ -16,6 +18,11 @@ const Home = () => {
 
     fetchEntities();
   }, []);
+
+  // Function to handle navigation to the Add Entity page
+  const handleAddEntity = () => {
+    history.push('/add-entity'); // Change this path to your actual add entity route
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -33,6 +40,16 @@ const Home = () => {
           <li>Receive notifications and reminders</li>
         </ul>
       </section>
+
+      {/* Button to go to Add Entity page */}
+      <div className="my-4">
+        <button 
+          onClick={handleAddEntity} 
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Add Entity
+        </button>
+      </div>
 
       {/* Entities */}
       <div className="border-t pt-4 mt-4">

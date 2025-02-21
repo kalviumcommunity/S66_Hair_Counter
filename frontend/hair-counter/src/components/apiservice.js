@@ -4,7 +4,8 @@ const api = axios.create({
   baseURL: 'http://localhost:8886', 
 });
 
-export const getUserProfile = async (userId) => {
+// Fetch user profile by user ID
+export const getUser Profile = async (userId) => {
   try {
     const response = await api.get(`/api/entities/profile/${userId}`);
     return response.data;
@@ -14,7 +15,8 @@ export const getUserProfile = async (userId) => {
   }
 };
 
-export const addUserAddress = async (userId, address) => {
+// Add user address
+export const addUser Address = async (userId, address) => {
   try {
     const response = await api.post(`/api/entities/profile/${userId}/address`, { address });
     return response.data;
@@ -24,12 +26,24 @@ export const addUserAddress = async (userId, address) => {
   }
 };
 
+// Fetch all entities
 export const getEntities = async () => {
   try {
-    const response = await api.get('/api/entities');
+    const response = await api.get('/api/');
     return response.data;
   } catch (error) {
     console.error('Error fetching entities', error);
+    throw error;
+  }
+};
+
+
+export const addEntity = async (entity) => {
+  try {
+    const response = await api.post('/api/create', entity); 
+    return response.data;
+  } catch (error) {
+    console.error('Error adding entity', error);
     throw error;
   }
 };
