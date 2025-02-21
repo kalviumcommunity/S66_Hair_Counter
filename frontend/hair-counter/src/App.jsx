@@ -1,14 +1,15 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from './components/home';
-import './App.css';
+import AddEntity from './components/add-entity';
 
 const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/add-entity" component={AddEntity} />
+      </Switch>
     </Router>
   );
 };
