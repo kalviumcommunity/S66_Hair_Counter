@@ -93,4 +93,28 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+router.get('/by-user/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const entities = await Entity.find({ created_by: userId });
+    if (entities.length > 0) {
+      res.status(200).send({ data: entities });
+    } else {
+      res.status(404).send({ error: 'No entities found for the specified user' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Failed to fetch entities' });
+  }
+});
+
+
+const User = require('./userSchema');router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find({}, '_id username'); 
+    console.error(error);
+    res.status(500).send({ error: 'Failed to fetch users' });
+  }
+});
 module.exports = router;
