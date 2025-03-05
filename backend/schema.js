@@ -21,6 +21,11 @@ const entitySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  created_by: {
+    type: mongoose.Schema.Types.ObjectId, // Referencing the User schema
+    ref: 'User',
+    required: true, // Ensures every entity has a creator
+  },
 });
 
 const Entity = mongoose.model('Entity', entitySchema);
