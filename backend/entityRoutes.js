@@ -1,63 +1,67 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
 
-// Define the entity schema
-const entitySchema = new mongoose.Schema({
-    name: String, // Add any other fields as needed
+// Get all entities
+router.get("/", (req, res) => {
+  const db = req.db;
+  const query = "SELECT * FROM entities";
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching entities:", err);
+      res.status(500).json({ message: "Error fetching entities" });
+    } else {
+      res.json(results);
+    }
+  });
 });
 
-const Entity = mongoose.model("Entity", entitySchema);
+// Get entities by user ID
+router.get("/user/:userId", (req, res) => {
+  const db = req.db;
+  const userId = req.params.userId;
+  const query = "SELECT * FROM entities WHERE created_by = ?";
 
-// Fetch all entities
-router.get("/", async (req, res) => {
-    try {
-        const entities = await Entity.find();
-        res.status(200).json(entities);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching entities", error });
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Error fetching entities for user:", err);
+      res.status(500).json({ message: "Error fetching entities for user" });
+    } else {
+      res.json(results);
     }
+  });
 });
 
-// Add a new entity
-router.post("/", async (req, res) => {
-    try {
-        const newEntity = new Entity(req.body);
-        await newEntity.save();
-        res.status(201).json(newEntity);
-    } catch (error) {
-        res.status(500).json({ message: "Error adding entity", error });
+// Create a new entity
+router.post("/", (req, res) => {
+  const db = req.db;
+  const { name, description, created_by } = req.body;
+  const query = "INSERT INTO entities (name, description, created_by) VALUES (?, ?, ?)";
+
+  db.query(query, [name, description, created_by], (err, result) => {
+    if (err) {
+      console.error("Error creating entity:", err);
+      res.status(500).json({ message: "Error creating entity" });
+    } else {
+      res.status(201).json({ id: result.insertId, name, description, created_by });
     }
+  });
 });
 
-// Update an existing entity
-router.put("/:id", async (req, res) => {
-    const { id } = req.params;
-    try {
-        const updatedEntity = await Entity.findByIdAndUpdate(id, req.body, {
-            new: true, // Return the updated document
-        });
-        if (!updatedEntity) {
-            return res.status(404).json({ message: "Entity not found" });
-        }
-        res.status(200).json(updatedEntity);
-    } catch (error) {
-        res.status(500).json({ message: "Error updating entity", error });
-    }
-});
+// Delete an entity by ID
+router.delete("/:id", (req, res) => {
+  const db = req.db;
+  const id = req.params.id;
+  const query = "DELETE FROM entities WHERE id = ?";
 
-// Delete an entity
-router.delete("/:id", async (req, res) => {
-    const { id } = req.params;
-    try {
-        const deletedEntity = await Entity.findByIdAndDelete(id);
-        if (!deletedEntity) {
-            return res.status(404).json({ message: "Entity not found" });
-        }
-        res.status(200).json({ message: "Entity deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ message: "Error deleting entity", error });
+  db.query(query, [id], (err) => {
+    if (err) {
+      console.error("Error deleting entity:", err);
+      res.status(500).json({ message: "Error deleting entity" });
+    } else {
+      res.json({ message: "Entity deleted successfully" });
     }
+  });
 });
 
 module.exports = router;

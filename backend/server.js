@@ -1,35 +1,42 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const cors = require("cors"); // Import cors
+const cors = require("cors");
+const mysql = require("mysql2");
 require("dotenv").config();
 
-const entityRoutes = require("./entityRoutes"); // Import entity routes
+const entityRoutes = require("./entityRoutes");
 
 const app = express();
 const PORT = 8886;
 
 // Use middlewares
-app.use(cors()); // Enable CORS
-app.use(bodyParser.json()); // Parse incoming JSON requests
+app.use(cors());
+app.use(bodyParser.json());
 
-// Connect to MongoDB
-const mongoURL = process.env.MONGO_URI;
-
-console.log("Mongo URI:", mongoURL);
-
-mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
-
-mongoose.connection.on("connected", () => {
-  console.log("Successfully connected to MongoDB");
+// Connect to MySQL
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
-mongoose.connection.on("error", (err) => {
-  console.error("Error connecting to MongoDB:", err);
+db.connect((err) => {
+  if (err) {
+    console.error("Error connecting to MySQL:", err);
+  } else {
+    console.log("Successfully connected to MySQL");
+  }
+});
+
+// Pass the database connection to routes
+app.use((req, res, next) => {
+  req.db = db;
+  next();
 });
 
 // Use entity routes
-app.use("/api/entities", entityRoutes); // Mount entity routes under `/api/entities`
+app.use("/api/entities", entityRoutes);
 
 // Health check endpoint
 app.get("/ping", (req, res) => {
