@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const authenticateToken = require("./authentication"); // Import the middleware
 
-// Get all entities
-router.get("/", (req, res) => {
+// Protected route to get all entities
+router.get("/", authenticateToken, (req, res) => {
   const db = req.db;
   const query = "SELECT * FROM entities";
 
@@ -16,8 +17,8 @@ router.get("/", (req, res) => {
   });
 });
 
-// Get entities by user ID
-router.get("/user/:userId", (req, res) => {
+// Protected route to get entities by user ID
+router.get("/user/:userId", authenticateToken, (req, res) => {
   const db = req.db;
   const userId = req.params.userId;
   const query = "SELECT * FROM entities WHERE created_by = ?";
@@ -32,8 +33,8 @@ router.get("/user/:userId", (req, res) => {
   });
 });
 
-// Create a new entity
-router.post("/", (req, res) => {
+// Protected route to create a new entity
+router.post("/", authenticateToken, (req, res) => {
   const db = req.db;
   const { name, description, created_by } = req.body;
   const query = "INSERT INTO entities (name, description, created_by) VALUES (?, ?, ?)";
@@ -48,8 +49,8 @@ router.post("/", (req, res) => {
   });
 });
 
-// Delete an entity by ID
-router.delete("/:id", (req, res) => {
+// Protected route to delete an entity by ID
+router.delete("/:id", authenticateToken, (req, res) => {
   const db = req.db;
   const id = req.params.id;
   const query = "DELETE FROM entities WHERE id = ?";
