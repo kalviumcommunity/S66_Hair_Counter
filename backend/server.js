@@ -2,9 +2,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mysql = require("mysql2");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const entityRoutes = require("./entityRoutes");
+const authenticateToken = require("./authentication"); // Import the middleware
 
 const app = express();
 const PORT = 8886;
@@ -35,8 +37,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Use entity routes
-app.use("/api/entities", entityRoutes);
+// Protect the entity routes
+app.use("/api/entities", authenticateToken, entityRoutes);
 
 // Health check endpoint
 app.get("/ping", (req, res) => {
@@ -51,19 +53,22 @@ app.post("/login", (req, res) => {
     return res.status(400).json({ error: "Username is required" });
   }
 
-  // Set the username in a cookie
-  res.cookie("username", username, {
+  // Generate a JWT token
+  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+  // Set the token in a cookie (optional)
+  res.cookie("token", token, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 1-day expiration
   });
 
-  res.status(200).json({ message: "Logged in successfully" });
+  res.status(200).json({ message: "Logged in successfully", token });
 });
 
 // Logout endpoint
 app.post("/logout", (req, res) => {
-  // Clear the username cookie
-  res.clearCookie("username");
+  // Clear the token cookie
+  res.clearCookie("token");
 
   res.status(200).json({ message: "Logged out successfully" });
 });

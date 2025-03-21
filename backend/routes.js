@@ -1,6 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Entity = require('./schema');
+const authenticateToken = require('./authentication'); // Import the middleware
 
 const router = express.Router();
 
@@ -15,7 +17,8 @@ const validateEntity = (data) => {
   return errors;
 };
 
-router.post('/create', async (req, res) => {
+// Protected route to create a new entity
+router.post('/create', authenticateToken, async (req, res) => {
   const entityData = req.body;
   const errors = validateEntity(entityData);
   if (Object.keys(errors).length > 0) {
@@ -35,7 +38,8 @@ router.post('/create', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+// Protected route to fetch all entities
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const entities = await Entity.find();
     res.status(200).send({ data: entities });
@@ -45,7 +49,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+// Protected route to fetch a single entity by ID
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const entity = await Entity.findById(req.params.id);
     if (entity) {
@@ -59,7 +64,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+// Protected route to update an entity by ID
+router.put('/:id', authenticateToken, async (req, res) => {
   const entityData = req.body;
   const errors = validateEntity(entityData);
   if (Object.keys(errors).length > 0) {
@@ -79,7 +85,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+// Protected route to delete an entity by ID
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const deletedEntity = await Entity.findByIdAndDelete(req.params.id);
     if (deletedEntity) {
@@ -93,8 +100,8 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-
-router.get('/by-user/:userId', async (req, res) => {
+// Protected route to fetch entities by user ID
+router.get('/by-user/:userId', authenticateToken, async (req, res) => {
   try {
     const userId = req.params.userId;
     const entities = await Entity.find({ created_by: userId });
@@ -109,12 +116,4 @@ router.get('/by-user/:userId', async (req, res) => {
   }
 });
 
-
-const User = require('./userSchema');router.get('/users', async (req, res) => {
-  try {
-    const users = await User.find({}, '_id username'); 
-    console.error(error);
-    res.status(500).send({ error: 'Failed to fetch users' });
-  }
-});
 module.exports = router;
